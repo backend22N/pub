@@ -22,7 +22,8 @@ class UserController extends ResponseController {
             "name" => $request["name"],
             "email" => $request["email"],
             "password" => bcrypt( $request["password"]),
-            "city_id" => ( new CityController )->getCityId( $request[ "city" ])
+            "city_id" => ( new CityController )->getCityId( $request[ "city" ]),
+            "admin" => $request[ "admin" ]
         ]);
 
         return $this->sendResponse( $user->name, "Sikeres regisztráció");
@@ -38,18 +39,21 @@ class UserController extends ResponseController {
             $authUser = Auth::user();
             $bannedTime = ( new BannerController )->getBannedTime( $authUser->name );
             ( new BannerController )->reSetLoginCounter( $authUser->name );
+
             if( $bannedTime < $actualTime ) {
 
+                ( new BannerController )->resetBannedTime( $authUser->name );
                 $token = $authUser->createToken( $authUser->name."Token" )->plainTextToken;
                 $data["user"] = [ "user" => $authUser->name ];
                 $data[ "time" ] = $bannedTime;
                 $data["token"] = $token;
 
+                return $this->sendResponse( $data, "Sikeres bejelentkezés");
+
+            }else {
+
+                return $this->sendError( "Autentikációs hiba", [ "Következő lehetőség: ", $bannedTime ], 401 );
             }
-
-
-            return $this->sendResponse( $data, "Sikeres bejelentkezés");
-
         }else {
 
             $loginCounter = ( new BannerController )->getLoginCounter( $request[ "name" ]);
@@ -75,14 +79,9 @@ class UserController extends ResponseController {
         return $this->sendResponse( $name, "Sikeres kijelentkezés");
     }
 
-    public function getUsers() {
 
-        $users = User::all();
 
-        return $users;
-    }
-
-    public function getTokens() {
+        public function getTokens() {
 
         $tokens = DB::table( "personal_access_tokens" )->get();
 

@@ -45,4 +45,12 @@ class BannerController extends Controller {
 
         $user->update();
     }
+
+    public function resetBannedTime( $name ) {
+
+        $user = User::where( "name", $name )->first();
+        $user->banning_time = null;
+
+        $user->update();
+    }
 }
