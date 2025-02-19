@@ -23,7 +23,7 @@ class UserController extends ResponseController {
             "email" => $request["email"],
             "password" => bcrypt( $request["password"]),
             "city_id" => ( new CityController )->getCityId( $request[ "city" ]),
-            "admin" => $request[ "admin" ]
+            "admin" => 0
         ]);
 
         return $this->sendResponse( $user->name, "Sikeres regisztráció");
@@ -61,13 +61,20 @@ class UserController extends ResponseController {
 
                 ( new BannerController )->setLoginCounter( $request[ "name" ]);
 
+                return $this->sendError( "Autentikációs hiba", "Hibás felhasználónév vagy jelszó", 401 );
+
             }else {
 
                 ( new BannerController )->setBannedTime( $request[ "name" ]);
+                $bannedTime = ( new BannerController )->getBannedTime( $request[ "name" ]);
+                ( new MailController )->sendMail( $request[ "name" ], $bannedTime );
+
+                $errorMessage = [ "message" => "Következő lehetőség:", "time" => $bannedTime ];
+
+                return $this->sendError( "Autentikációs hiba", [$errorMessage], 401 );
             }
-            $error = ( new BannerController )->getBannedTime( $request[ "name" ]);
-            $errorMessage = [ "time" => Carbon::now(), "hiba" => "Nem megfelelő felhasználónév vagy jelszó" ];
-            return $this->sendError( $error, [$errorMessage], 401 );
+
+
         }
     }
 

@@ -12,7 +12,7 @@ class AuthController extends ResponseController {
 
     public function getUsers() {
 
-        if ( !Gate::denies( "user" )) {
+        if ( !Gate::allows( "super" )) {
 
             return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
         }
@@ -32,11 +32,13 @@ class AuthController extends ResponseController {
         $user->admin = 1;
 
         $user->update();
+
+        return $this->sendResponse( $user->name, "Admin jog megadva" );
     }
 
     public function updateUser( Request $request ) {
 
-        if( !Gate::denies( "user" )) {
+        if( !Gate::allows( "super" )) {
 
             return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
         }
@@ -50,7 +52,16 @@ class AuthController extends ResponseController {
         return $this->sendResponse( $user, "Felhasználó frissítve" );
     }
 
-    public function destroyUser() {
+    public function destroyUser( Request $request ) {
 
+        if( !Gate::allows( "super" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
+
+        $user =  User::find( $request[ "id" ]);
+        $user->delete();
+
+        return $this->sendResponse( $user->name, "Felhasználó törölve" );
     }
 }

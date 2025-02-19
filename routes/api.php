@@ -22,14 +22,16 @@ Route::middleware( "auth:sanctum" )->group( function(){
     Route::post( "/new", [ DrinkController::class, "addDrink" ]);
     Route::put( "/modify", [ DrinkController::class, "modifyDrink" ]);
     Route::delete( "/destroy", [ DrinkController::class, "destroy" ]);
-
+    
     Route::post( "/newtype", [ TypeController::class, "newType" ]);
     Route::put( "/modtype", [ TypeController::class, "modifyType" ]);
     Route::delete( "/desttype", [ TypeController::class, "destroyType" ]);
+    
 
     Route::post( "/newpackage", [ PackageController::class, "newPackage" ]);
     Route::put( "/modpackage", [ PackageController::class, "modifyPackage" ]);
     Route::delete( "/destpackage", [ PackageController::class, "destroyPackage" ]);
+    
 
     Route::post( "/newcity", [ CityController::class, "addCity" ]);
     Route::get( "/userprofile", [ ProfileController::class, "getProfile" ]);
@@ -40,22 +42,29 @@ Route::middleware( "auth:sanctum" )->group( function(){
     Route::get( "/users", [ AuthController::class, "getUsers" ]);
     Route::put( "/admin", [ AuthController::class, "setAdmin" ]);
     Route::put( "updateuser", [ AuthController::class, "updateUser" ]);
+    Route::delete( "/deleteuser", [ AuthController::class, "destroyUser" ]);
 });
 
 Route::post( "/register", [ UserController::class, "register" ]);
 Route::post( "/login", [ UserController::class, "login" ]);
 
-
-Route::get( "/tokens", [ UserController::class, "getTokens" ]);
-
 Route::get( "/drinks", [ DrinkController::class, "getDrinks" ]);
 Route::get( "/drink", [ DrinkController::class, "getOneDrink" ]);
 Route::get( "/amount", [ DrinkController::class, "getAmount" ]);
 
-Route::get( "/types", [ TypeController::class, "getTypes" ]);
-
 Route::get( "/packages", [ PackageController::class, "getPackages" ]);
 Route::get( "/package", [ PackageController::class, "getPackage" ]);
+
+Route::get( "/types", [ TypeController::class, "getTypes" ]);
+Route::get( "/type", [ TypeController::class, "getType" ]);
+
+Route::get( "/tokens", [ UserController::class, "getTokens" ]);
+
+
+
+
+
+
 
 
 

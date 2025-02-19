@@ -8,11 +8,13 @@ use App\Models\Drink;
 use App\Http\Requests\DrinkRequest;
 use App\Http\Requests\DrinkModRequest;
 use App\Http\Resources\Drink as DrinkResource;
+use Illuminate\Support\Facades\Gate;
 
 class DrinkController extends ResponseController {
 
     public function getDrinks() {
 
+        
         $drinks = Drink::with( "package", "type" )->get();
 
         return $this->sendResponse( DrinkResource::collection( $drinks ), "Sikeres olvasás");
@@ -40,6 +42,21 @@ class DrinkController extends ResponseController {
 
     public function addDrink( DrinkRequest $request ) {
 
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
+
+        $request->validated();
+
         $drink = new Drink;
         $drink->drink = $request["drink"];
         $drink->amount = $request["amount"];
@@ -52,6 +69,19 @@ class DrinkController extends ResponseController {
     }
 
     public function modifyDrink( DrinkModRequest $request  ) {
+
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
 
         $request->validated();
         $drink = Drink::find( $request[ "id" ]);
@@ -73,6 +103,19 @@ class DrinkController extends ResponseController {
     }
 
     public function destroy( Request $request ) {
+
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
 
         $drink = Drink::find( $request[ "id" ] );
         $drink->delete();

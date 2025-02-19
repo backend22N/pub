@@ -24,7 +24,7 @@ class PackageController extends ResponseController {
 
         if( is_null( $package )) {
 
-            return $this->sendError( "Adathiba", [ "Nincs ilyen kiszerelés" ] );
+            return $this->sendError( "Adathiba", [ "Nincs ilyen kiszerelés" ], 406 );
 
         }
 
@@ -32,6 +32,19 @@ class PackageController extends ResponseController {
     }
 
     public function newPackage( PackageRequest $request ) {
+
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
 
         $request->validated();
 
@@ -45,12 +58,25 @@ class PackageController extends ResponseController {
 
     public function modifyPackage( PackageRequest $request  ) {
 
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
+
         $request->validated();
 
         $package = Package::find( $request[ "id" ] );
         if( is_null( $package )) {
 
-            $this->sendError( "Adathiba", [ "Nincs ilyen ital" ] );
+            $this->sendError( "Adathiba", [ "Nincs ilyen ital" ], 406 );
 
         }
 
@@ -62,11 +88,24 @@ class PackageController extends ResponseController {
 
     public function destroyPackage( Request $request ) {
 
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
+
         $package = Package::find( $request[ "id" ]);
 
         if( is_null( $package )) {
 
-            return $this->sendError( "Adathiba", [ "Kiszerelés nem létezik" ], 405 );
+            return $this->sendError( "Adathiba", [ "Kiszerelés nem létezik" ], 406 );
 
         }
 

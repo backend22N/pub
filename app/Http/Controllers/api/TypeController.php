@@ -20,12 +20,30 @@ class TypeController extends ResponseController {
 
     public function getType( Request $request ) {
 
-        $type = Package::where( "type", $request[ "name" ] )->first();
+        $type = Type::where( "type", $request[ "type" ] )->first();
 
-        return $type;
+        if( is_null( $type )) {
+
+            return $this->sendError( "Hibás adat", [ "Nincs ilyen típus" ], 406 );
+        }
+
+        return $this->sendResponse( $type, "Típus betöltve" );
     }
 
     public function newType( TypeRequest $request ) {
+
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
 
         $request->validated();
 
@@ -39,6 +57,19 @@ class TypeController extends ResponseController {
     }
 
     public function modifyType( TypeRequest $request ) {
+
+        Gate::before( function(){
+
+            $user = auth( "sanctum" )->user();
+            if( $user->admin == 2 ){
+
+                return true;
+            }
+        });
+        if ( !Gate::allows( "admin" )) {
+
+            return $this->sendError( "Autentikációs hiba", "Nincs jogosultság", 401 );
+        }
 
         $request->validated();
 
@@ -62,7 +93,7 @@ class TypeController extends ResponseController {
 
         if( is_null( $type )) {
 
-            return $this->sendError( "Adathiba", [ "Típus nem létezik" ], 405 );
+            return $this->sendError( "Adathiba", [ "Típus nem létezik" ], 406 );
 
         }
 
