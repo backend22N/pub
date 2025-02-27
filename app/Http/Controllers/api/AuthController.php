@@ -29,7 +29,7 @@ class AuthController extends ResponseController {
         }
 
         $user = User::find( $request[ "id" ]);
-        $user->admin = 1;
+        $user->admin = $request[ "admin" ];
 
         $user->update();
 

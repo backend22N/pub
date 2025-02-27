@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Http\Requests\PackageRequest;
 use App\Http\Controllers\api\ResponseController;
 use App\Http\Resources\Package as PackageResource;
+use Illuminate\Support\Facades\Gate;
 
 class PackageController extends ResponseController {
 

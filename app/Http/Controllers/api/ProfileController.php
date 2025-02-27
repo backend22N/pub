@@ -31,7 +31,7 @@ class ProfileController extends ResponseController {
 
         $user->update();
 
-        return this->sendResponse( $user, "Profil módosítva");
+        return $this->sendResponse( $user, "Profil módosítva");
     }
 
     public function setPassword( Request $request ) {
@@ -41,7 +41,7 @@ class ProfileController extends ResponseController {
 
         $user->update();
 
-        return this->sendResponse( $user, "Jelszócsere sikeres");
+        return $this->sendResponse( $user, "Jelszócsere sikeres");
     }
 
     public function deleteProfile() {
@@ -50,6 +50,6 @@ class ProfileController extends ResponseController {
 
         $user->delete();
 
-        return this->sendResponse( $user, "Profil törölve");
+        return $this->sendResponse( $user, "Profil törölve");
     }
 }

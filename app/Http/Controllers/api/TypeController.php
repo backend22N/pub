@@ -8,6 +8,7 @@ use App\Models\Type;
 use App\Http\Requests\TypeRequest;
 use App\Http\Resources\Type as TypeResource;
 use App\Http\Controllers\api\ResponseController;
+use Illuminate\Support\Facades\Gate;
 
 class TypeController extends ResponseController {
 
